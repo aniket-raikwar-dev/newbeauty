@@ -15,7 +15,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://my-project-three-ochre.vercel.app",
+      "https://my-project-psi-green-47.vercel.app",
       "https://www.beautycabin.suri",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
