@@ -1,22 +1,37 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const Admin = require("../models/Admin");
 
 const router = express.Router();
 
-router.post("/login", (req, res) => {
-  const { password } = req.body;
+router.post("/login", async (req, res) => {
+    console.log("LOGIN BODY:", req.body); // 👈 
+  try {
+    const { email, password } = req.body;
 
-  if (password !== process.env.ADMIN_PASSWORD) {
-    return res.status(401).json({ message: "Wrong password" });
+    // check missing fields
+    if (!email || !password) {
+      return res.status(400).json({ message: "Missing email or password" });
+    }
+
+    const admin = await Admin.findOne({ email });
+
+    if (!admin || admin.password !== password) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { id: admin._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({ token });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
   }
-
-  const token = jwt.sign(
-    { role: "admin" },
-    process.env.JWT_SECRET,
-    { expiresIn: "1d" }
-  );
-
-  res.json({ token });
 });
 
 module.exports = router;

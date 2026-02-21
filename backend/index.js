@@ -10,30 +10,43 @@ dotenv.config();
 
 const app = express();
 
-/* 🔐 CORS (JWT Header Based) */
+/* ✅ TRUST PROXY (important for Render/Vercel cookies & headers) */
+app.set("trust proxy", 1);
+
+/* 🔐 CORS */
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",   // 👈 ADD THIS
+  "https://my-project-psi-green-47.vercel.app"
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://my-project-psi-green-47.vercel.app",
-      "https://www.beautycabin.suri",
-    ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: function (origin, callback) {
+      // allow mobile apps / postman
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-
-
+/* 📦 Middleware */
 app.use(express.json());
 
-/* ✅ MongoDB */
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ Mongo Error:", err));
-
 /* 🩺 Health Check */
+app.get("/", (req, res) => {
+  res.json({ status: "Backend running 🚀" });
+});
+
 app.get("/db-check", (req, res) => {
   res.json({ ok: true, message: "Backend is live" });
 });
@@ -42,8 +55,18 @@ app.get("/db-check", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/appointments", appointmentRoutes);
 
-/* 🚀 Start Server (Render Compatible) */
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+/* ✅ MongoDB */
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB Connected");
+
+    const PORT = process.env.PORT || 5000;
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ Mongo Error:", err);
+  });

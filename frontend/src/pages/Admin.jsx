@@ -62,7 +62,7 @@ export default function Admin() {
 
   // ❌ Delete
   const deleteBooking = async (id) => {
-    if (!window.confirm("Delete?")) return;
+   
 
     try {
       await api.delete(`/appointments/${id}`);
