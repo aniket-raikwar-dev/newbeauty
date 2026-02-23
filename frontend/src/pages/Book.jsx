@@ -24,7 +24,7 @@ export default function Book() {
     try {
 
       
-   await axios.post("http://localhost:5000/appointments", form);
+   await axios.post("https://newbeauty-backend.onrender.com/appointments", form);
 
 
 
