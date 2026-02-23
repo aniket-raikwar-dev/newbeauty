@@ -44,9 +44,9 @@ app.use("/appointments", appointmentRoutes);
 // Serve React frontend
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-// Catch-all route (Render compatible)
-app.get("/:any(*)", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+// ✅ Catch-all SPA route (must be AFTER API routes)
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
 });
 
 // MongoDB + Server
