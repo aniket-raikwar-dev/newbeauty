@@ -15,6 +15,7 @@ app.set("trust proxy", 1);
 
 /* 🔐 CORS */
 const allowedOrigins = [
+  "https://newbeauty.onrender.com",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",   // 👈 ADD THIS
