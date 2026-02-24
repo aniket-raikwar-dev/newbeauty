@@ -1,0 +1,16 @@
+# Render Blueprint - Add this rewrite rule for SPA client-side routing
+# If you use Blueprint: this file configures your static site.
+# If you deployed manually: Add the rule in Dashboard instead (see below)
+
+services:
+  - type: web
+    name: newbeauty
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      # SPA fallback: serve index.html for all routes (fixes refresh on /book, /admin, etc.)
+      - type: rewrite
+        source: /*
+        destination: /index.html
