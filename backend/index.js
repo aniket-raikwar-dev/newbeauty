@@ -26,18 +26,19 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow mobile apps / postman
+      // allow mobile apps / postman / server-side requests
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
       }
+      // Reject without throwing - prevents 500 and ensures proper CORS headers on preflight
+      return callback(null, false);
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+    optionsSuccessStatus: 200, // Required for some browsers/caches on preflight
   })
 );
 

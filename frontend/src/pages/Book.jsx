@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "../api/axios";
 import toast from "react-hot-toast";
 
 export default function Book() {
@@ -24,7 +24,7 @@ export default function Book() {
     try {
 
       
-   await axios.post("https://newbeauty-backend.onrender.com/appointments", form);
+   await api.post("/appointments", form);
 
 
 
